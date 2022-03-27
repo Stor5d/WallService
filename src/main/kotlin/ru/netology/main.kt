@@ -14,6 +14,15 @@ fun main() {
         comments, copyright, likes, reposts, views, "post", 1234, canPin = true, canDelete = true,
         canEdit = true, isPinned = true, markedAsAds = true, isFavorite = true, donut = donut, postponedId = 1223
     )
+    val audio = Audio(1, 2, "Валерий Леонтьев", "Художник", 223, "www.musik.ru/leo/hudozhnik")
+    val attachment1 = AudioAttachment(audio)
+    post1.addAttachments(attachment1)
+    val video = Video(
+        333, 444, "Летящая обезьяна", "обезьяна летит по горам",
+        40, 11212121, 13223232, 30, "www.youtube.com"
+    )
+    val attachment2 = VideoAttachment(video)
+    post1.addAttachments(attachment2)
     val post2 = Post(
         0, 1, 2, 3, Date(), "текст поста 2", 4, 5, true,
         comments, copyright, likes, reposts, views, "post", 1234, canPin = true, canDelete = true,
@@ -56,11 +65,11 @@ data class Post(
     val replyOwnerId: Int,
     val replyPostId: Int,
     val friendsOnly: Boolean,
-    val comments: Comments,
-    val copyright: Copyright,
-    val likes: Likes,
-    val reposts: Reposts,
-    val views: Views,
+    val comments: Comments?,
+    val copyright: Copyright?,
+    val likes: Likes?,
+    val reposts: Reposts?,
+    val views: Views?,
     val postType: String,
     val singerId: Int,
     val canPin: Boolean,
@@ -69,9 +78,15 @@ data class Post(
     val isPinned: Boolean,
     val markedAsAds: Boolean,
     val isFavorite: Boolean,
-    val donut: Donut,
+    val donut: Donut?,
     val postponedId: Int
-)
+) {
+    private var attachments = emptyArray<Attachment>()
+
+    fun addAttachments(attachment: Attachment) {
+        attachments += attachment
+    }
+}
 
 data class Comments(
     var count: Int,
@@ -109,4 +124,66 @@ data class Donut(
     var editMode: String
 )
 
+sealed class Attachment(val type: String)
+
+data class AudioAttachment(val audio: Audio) : Attachment("audio")
+
+class Audio(
+    val id: Int,
+    val ownerId: Int,
+    val artist: String,
+    val title: String,
+    val duration: Int,
+    val url: String
+)
+
+data class VideoAttachment(val video: Video) : Attachment("video")
+
+class Video(
+    val id: Int,
+    val ownerId: Int,
+    val title: String,
+    val description: String,
+    val duration: Int,
+    val date: Int,
+    val addingDate: Int,
+    val views: Int,
+    val url: String
+)
+
+data class PhotoAttachment(val photo: Photo) : Attachment("photo")
+
+class Photo(
+    val id: Int,
+    val albumId: Int,
+    val ownerId: Int,
+    val userId: Int,
+    val text: String,
+    val date: Int,
+    val width: Int,
+    val height: Int,
+    val url: String
+)
+
+data class FileAttachment(val file: File) : Attachment("file")
+
+class File(
+    val id: Int,
+    val ownerId: Int,
+    val title: String,
+    val ext: String,
+    val size: Int,
+    val date: Int,
+    val type: Int,
+    val url: String
+)
+
+data class LinkAttachment(val link: Link) : Attachment("link")
+
+class Link(
+    val url: String,
+    val title: String,
+    val caption: String,
+    val description: String,
+)
 
