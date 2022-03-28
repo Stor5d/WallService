@@ -11,7 +11,7 @@ fun main() {
     val donut = Donut(true, 1234, true, "all")
     val post1 = Post(
         0, 1, 2, 3, Date(), "текст поста 1", 4, 5, true,
-        comments, copyright, likes, reposts, views, "post", 1234, canPin = true, canDelete = true,
+        comments, copyright, likes, reposts, views, "post", null, null, 1, canPin = true, canDelete = true,
         canEdit = true, isPinned = true, markedAsAds = true, isFavorite = true, donut = donut, postponedId = 1223
     )
     val audio = Audio(1, 2, "Валерий Леонтьев", "Художник", 223, "www.musik.ru/leo/hudozhnik")
@@ -25,7 +25,7 @@ fun main() {
     post1.addAttachments(attachment2)
     val post2 = Post(
         0, 1, 2, 3, Date(), "текст поста 2", 4, 5, true,
-        comments, copyright, likes, reposts, views, "post", 1234, canPin = true, canDelete = true,
+        comments, copyright, likes, reposts, views, "post", null, null, 1, canPin = true, canDelete = true,
         canEdit = true, isPinned = true, markedAsAds = true, isFavorite = true, donut = donut, postponedId = 1223
     )
     WallService.add(post1)
@@ -71,7 +71,10 @@ data class Post(
     val reposts: Reposts?,
     val views: Views?,
     val postType: String,
+    val postSource: PostSource?,
+    val geo: Geo?,
     val singerId: Int,
+    val copyHistory: Array<String> = emptyArray<String>(),
     val canPin: Boolean,
     val canDelete: Boolean,
     val canEdit: Boolean,
@@ -83,13 +86,14 @@ data class Post(
 ) {
     private var attachments = emptyArray<Attachment>()
 
-    fun addAttachments(attachment: Attachment) {
+    fun addAttachments(attachment: Attachment): Boolean {
         attachments += attachment
+        return true
     }
 }
 
 data class Comments(
-    var count: Int,
+    val count: Int,
     var canPost: Boolean,
     var groupsCanPost: Boolean,
     var canClose: Boolean,
@@ -97,7 +101,7 @@ data class Comments(
 )
 
 data class Copyright(
-    var id: Int,
+    val id: Int,
     var link: String,
     var name: String,
     var type: String
@@ -115,13 +119,26 @@ data class Reposts(
     var userReposted: Boolean
 )
 
-data class Views(var count: Int)
+data class Views(val count: Int)
+
+data class PostSource(
+    val type: String,
+    val platform: String,
+    val data: String,
+    val url: String
+)
+
+data class Geo(
+    val type: String,
+    val coordinates: String,
+    val plase: Objects
+)
 
 data class Donut(
-    var isDonut: Boolean,
-    var paidDuration: Int,
-    var canPublishFreeCopy: Boolean,
-    var editMode: String
+    val isDonut: Boolean,
+    val paidDuration: Int,
+    val canPublishFreeCopy: Boolean,
+    val editMode: String
 )
 
 sealed class Attachment(val type: String)
