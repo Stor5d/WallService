@@ -19,7 +19,7 @@ object WallService {
 
     fun update(post: Post): Boolean {
         for ((index, postOrigin) in posts.withIndex()) {
-            if (post.id == postOrigin.id) {
+            if (post.id == postOrigin.id && post.ownerId == postOrigin.ownerId) {
                 posts[index] = post.copy(date = postOrigin.date)
                 return true
             }
